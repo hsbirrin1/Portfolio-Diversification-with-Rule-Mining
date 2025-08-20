@@ -3,13 +3,13 @@
 # -------------------------------------------------------------------------
 # What this script does
 # 1) Pulls 10-K fundamentals from SEC EDGAR (companyconcept API)
-# 2) Computes Buffett-style ratios per company:
-#    ROE, ROA, Debt-to-Equity (D/E), Net Margin, ROIC (approx),
+# 2) Computes ratios per company:
+#    ROE, ROA, Debt-to-Equity (D/E), Net Margin, ROIC,
 #    FCF Margin (FCF/Revenue), and 5y EPS Growth (from SEC when available)
-# 3) Builds a normalized (MinMax) Health Score in [0,1] (NaN tolerant)
+# 3) Builds a normalized (MinMax) Health Score in [0,1] 
 # 4) Runs Apriori rule mining on factor flags
 # 5) Allocates $100k, tilting toward strongest HealthScores, caps, exact rounding; saves & plots pie chart
-# 6) COVID event study for GOOGL using Yahoo Chart API (no yfinance), t-tests for 5d/20d/30d
+# 6) COVID event study for GOOGL using Yahoo Chart API, t-tests for 5d/20d/30d
 # 7) Exports CSVs of key tables for your report
 # -------------------------------------------------------------------------
 
