@@ -1,8 +1,8 @@
-# Option 4 — Portfolio Diversification with Rule Mining (Buffett-style ratios)
+# Option 4 — Portfolio Diversification with Rule Mining
 # Companies: COST, XOM, UNH, GOOGL, BAC
 # -------------------------------------------------------------------------
 # What this script does
-# 1) Pulls 10-K fundamentals from SEC EDGAR (companyconcept API)
+# 1) Pulls 10-K fundamentals from SEC EDGAR 
 # 2) Computes ratios per company:
 #    ROE, ROA, Debt-to-Equity (D/E), Net Margin, ROIC,
 #    FCF Margin (FCF/Revenue), and 5y EPS Growth (from SEC when available)
@@ -34,9 +34,6 @@ from scipy import stats
 OUTDIR = Path(__file__).resolve().parent
 print(f"\n[INFO] Outputs will be saved to: {OUTDIR}\n")
 
-# -----------------------------
-# Config
-# -----------------------------
 UA = {"User-Agent": "hbirring@seattleu.edu (for academic use)"}
 
 TICKERS = {
@@ -86,7 +83,7 @@ TAGS = {
 FORMS_10K = {"10-K"}
 
 # -----------------------------
-# SEC helpers
+# SEC 
 # -----------------------------
 
 def get_company_concept(cik: str, tag: str, unit: str = "USD"):
@@ -251,13 +248,13 @@ for tkr, cik in TICKERS.items():
 latest_df = pd.DataFrame(ratio_records).T
 print("\nLatest ratios (raw):\n", latest_df)
 
-# Optionally export raw ratios
+# Raw ratios
 raw_csv = OUTDIR / "latest_ratios_raw.csv"
 latest_df.reset_index().rename(columns={"index":"Ticker"}).to_csv(raw_csv, index=False)
 print(f"[SAVED] Raw ratios CSV → {raw_csv}")
 
 # -----------------------------
-# Health Score (MinMax across peers) — NaN tolerant
+# Health Score (MinMax across peers) 
 # -----------------------------
 POS = ["ROE","ROA","NetMargin","ROIC","FCFMargin","EPS_Growth_5y"]
 
@@ -303,7 +300,7 @@ scaled_df.reset_index().rename(columns={"index":"Ticker"}).to_csv(scaled_csv, in
 print(f"[SAVED] Scaled metrics CSV → {scaled_csv}")
 
 # -----------------------------
-# Apriori — boolean flags & rules
+# Apriori 
 # -----------------------------
 flags = pd.DataFrame(index=scaled_df.index)
 flags["High_ROE"]     = (scaled_df["ROE_S"] >= 2/3).fillna(False).astype(bool)
@@ -385,7 +382,7 @@ alloc_csv = OUTDIR / "portfolio_allocation.csv"
 alloc_out.reset_index().rename(columns={"index":"Ticker"}).to_csv(alloc_csv, index=False)
 print(f"[SAVED] Portfolio allocation CSV → {alloc_csv}")
 
-# Auto-open pie on macOS (optional)
+# Auto-open pie 
 try:
     if sys.platform == "darwin":
         subprocess.call(["open", str(pie_path)])
@@ -393,7 +390,7 @@ except Exception:
     pass
 
 # -----------------------------
-# Event Study for GOOGL (COVID) — Yahoo chart API (no yfinance)
+# Event Study for GOOGL (COVID) — Yahoo chart API
 # T-tests for 5d, 20d, 30d horizons (before vs after event)
 # -----------------------------
 
@@ -406,7 +403,7 @@ def yahoo_prices(ticker: str, interval="1d", rng="120mo") -> pd.DataFrame:
     ts = data["timestamp"]
     quote = data["indicators"]["quote"][0]
     df = pd.DataFrame({
-        "Date": [datetime.fromtimestamp(t, UTC) for t in ts],  # timezone-aware UTC (no deprecation)
+        "Date": [datetime.fromtimestamp(t, UTC) for t in ts],  # timezone-aware UTC 
         "Close": quote["close"],
         "Volume": quote.get("volume"),
     }).dropna()
@@ -436,7 +433,7 @@ def event_ttests_google_covid_multi(event_date="2020-03-11"):
         data[f"Return_{w}d"] = (data["GOOGL_Close"].shift(-w) / data["GOOGL_Close"]) - 1.0
         data[f"Market_return_{w}d"] = (data["SPX_Close"].shift(-w) / data["SPX_Close"]) - 1.0
 
-    # Event date index (UTC-aware to match price index)
+    # Event date index 
     event_dt = pd.to_datetime(event_date, utc=True)
     if event_dt < data.index.min() or event_dt > data.index.max():
         print("Event date outside price history; skipping event study.")
@@ -445,7 +442,7 @@ def event_ttests_google_covid_multi(event_date="2020-03-11"):
     # For plotting context line
     d0 = data.index[data.index.searchsorted(event_dt)]
 
-    # Run t-tests per horizon (compare last w returns before vs first w returns after)
+    # Run t-tests per horizon 
     for w in horizons:
         dfw = data.dropna(subset=[f"Return_{w}d", f"Market_return_{w}d"])
         before = dfw.loc[dfw.index < event_dt, f"Return_{w}d"].tail(w)
@@ -467,7 +464,7 @@ def event_ttests_google_covid_multi(event_date="2020-03-11"):
         else:
             print("No statistically significant difference.")
 
-    # Simple price chart with event line — save & (on macOS) auto-open
+    # Simple price chart with event line 
     try:
         plt.figure(figsize=(11,5))
         plt.plot(data.index, data["GOOGL_Close"], label="GOOGL Close")
