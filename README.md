@@ -38,6 +38,21 @@ Scaled ratios + HealthScores
 Apriori rules discovered
 Final portfolio allocation
 
+* Risk Assessment
+Evaluated sector-specific risks for each stock:
+  Exxon → Oil price volatility, energy transition.
+  BAC → Regulatory compliance, interest rates, credit risk.
+  UNH → Government healthcare regulations, rising costs.
+  GOOGL → Antitrust risks, competition in AI/ads.
+  COST → Thin margins, economic downturns, competition.
+Showed how diversification mitigates these risks.
+
+* Scenario Testing (Event Study)
+Chose Alphabet (GOOGL) for stress testing during COVID-19 pandemic (March 2020).
+Compared pre- and post-event returns over 5, 20, and 30-day windows.
+Found that while short-term returns weren’t significantly different, medium- and long-term returns were significantly better after the event.
+Concluded that Google showed resilience and recovery capacity.
+
 * Tech Stack
 Python (3.10+)
 Pandas / NumPy → data wrangling
